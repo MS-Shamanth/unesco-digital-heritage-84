@@ -560,26 +560,26 @@ export const ExtendedView = (): JSX.Element => {
 
         {/* Related Sources */}
         <Card>
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <h3 className="font-semibold text-lg mb-4">Related Sources</h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-4 text-sm sm:text-base">
               {analysisData.otherSources && analysisData.otherSources.length > 0 ? "Additional sources found for this story" : "Cross-reference this story across multiple reliable sources"}
             </p>
             <div className="space-y-3">
-              {relatedSources.map((source, index) => <div key={index} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Globe className="w-5 h-5 text-gray-400" />
-                    <div>
-                      <div className="font-medium">{source.title}</div>
-                      <div className="text-sm text-gray-500">{source.url}</div>
+              {relatedSources.map((source, index) => <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 border border-border rounded-lg gap-3 sm:gap-0">
+                  <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
+                    <Globe className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5 sm:mt-0" />
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium text-sm sm:text-base break-words">{source.title}</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground break-all">{source.url}</div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge className={getCredibilityColor(source.credibility)}>
+                  <div className="flex items-center justify-between sm:justify-end gap-2 flex-shrink-0">
+                    <Badge className={getCredibilityColor(source.credibility)} variant="secondary">
                       {source.credibility}
                     </Badge>
-                    <a href={source.url} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                    <a href={source.url} target="_blank" rel="noopener noreferrer" className="p-1">
+                      <ExternalLink className="w-4 h-4 text-muted-foreground hover:text-foreground transition-colors" />
                     </a>
                   </div>
                 </div>)}
