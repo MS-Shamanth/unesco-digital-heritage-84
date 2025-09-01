@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Key, Loader2, Download } from 'lucide-react';
+import { Play, Key, Loader2, Download, Search, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { replicateService } from '@/services/replicateService';
 import { YouTubeService } from '@/services/youtubeService';
+import { useIsMobile } from '@/hooks/use-mobile';
+
 interface YouTubeVideo {
   videoId: string;
   title: string;
@@ -15,11 +17,13 @@ interface YouTubeVideo {
   channelTitle: string;
   publishedAt: string;
 }
+
 interface VideoGeneratorProps {
   analysisTitle?: string;
   analysisContent?: string;
   analysisData?: any;
 }
+
 export const VideoGenerator: React.FC<VideoGeneratorProps> = ({
   analysisTitle = "",
   analysisContent = "",
@@ -37,9 +41,10 @@ export const VideoGenerator: React.FC<VideoGeneratorProps> = ({
   const [selectedVideo, setSelectedVideo] = useState<YouTubeVideo | null>(null);
   const [isLoadingYoutube, setIsLoadingYoutube] = useState(false);
   const [youtubeApiKey, setYoutubeApiKey] = useState('');
-  const {
-    toast
-  } = useToast();
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  
+  const isMobile = useIsMobile();
+  const { toast } = useToast();
   useEffect(() => {
     // Initialize YouTube API key
     YouTubeService.initializeApiKey();
@@ -184,84 +189,225 @@ export const VideoGenerator: React.FC<VideoGeneratorProps> = ({
       setIsGenerating(false);
     }
   };
-  return <div className="bg-black/20 rounded-lg p-6 mb-4 flex items-center justify-center min-h-[300px]">
+  const handleFindMoreVideos = async () => {
+    if (analysisTitle && analysisContent) {
+      setCurrentVideoIndex(0);
+      const videos = await YouTubeService.searchVideos(analysisTitle, 5); // Get more videos
+      setYoutubeResults(videos);
+      if (videos.length > 0) {
+        setSelectedVideo(videos[0]);
+      }
+    }
+  };
+
+  const handleNextVideo = () => {
+    if (youtubeResults.length > 1) {
+      const nextIndex = (currentVideoIndex + 1) % youtubeResults.length;
+      setCurrentVideoIndex(nextIndex);
+      setSelectedVideo(youtubeResults[nextIndex]);
+    }
+  };
+
+  const handlePreviousVideo = () => {
+    if (youtubeResults.length > 1) {
+      const prevIndex = currentVideoIndex === 0 ? youtubeResults.length - 1 : currentVideoIndex - 1;
+      setCurrentVideoIndex(prevIndex);
+      setSelectedVideo(youtubeResults[prevIndex]);
+    }
+  };
+
+  return (
+    <div className={`card-glass overflow-hidden ${isMobile ? 'p-4' : 'p-6'} mb-6 animate-slide-in-up`}>
       {isLoadingYoutube ? (
-        <div className="text-center">
-          <Loader2 className="w-16 h-16 mx-auto mb-3 text-white/70 animate-spin" />
-          <p className="text-white/70 mb-2">Finding related videos...</p>
-          <p className="text-white/50 text-sm">Searching YouTube for relevant content</p>
+        <div className="text-center py-12">
+          <div className="loading-dots mb-4">
+            <div style={{ '--delay': '0ms' } as any}></div>
+            <div style={{ '--delay': '150ms' } as any}></div>
+            <div style={{ '--delay': '300ms' } as any}></div>
+          </div>
+          <h3 className="heading-responsive text-foreground mb-2">Finding Related Videos</h3>
+          <p className="body-responsive text-muted-foreground">Searching YouTube for relevant content...</p>
         </div>
       ) : selectedVideo ? (
-        <div className="w-full max-w-4xl">
-          {/* Large Video Preview */}
-          <div className="bg-black rounded-lg overflow-hidden mb-4">
+        <div className="w-full">
+          {/* Video Header */}
+          <div className="flex-mobile items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-8 bg-gradient-to-b from-primary to-primary-light rounded-full"></div>
+              <h2 className="subheading-responsive text-foreground">Related Video Content</h2>
+            </div>
+            {youtubeResults.length > 1 && (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handlePreviousVideo}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  ←
+                </Button>
+                <span className="text-sm text-muted-foreground">
+                  {currentVideoIndex + 1} of {youtubeResults.length}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleNextVideo}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  →
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Responsive Video Container */}
+          <div className={`responsive-video mb-4 ${isMobile ? 'video-container-mobile' : ''}`}>
             <iframe
-              width="100%"
-              height="400"
               src={selectedVideo.embedUrl}
               title={selectedVideo.title}
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
-              className="w-full h-[400px]"
+              className="rounded-lg shadow-medium"
             />
           </div>
           
           {/* Video Info */}
-          <div className="text-center">
-            <h3 className="text-white font-semibold text-lg mb-2 line-clamp-2">
-              {selectedVideo.title}
-            </h3>
-            <p className="text-white/70 text-sm mb-4">
-              by {selectedVideo.channelTitle} • {new Date(selectedVideo.publishedAt).toLocaleDateString()}
-            </p>
+          <div className="space-y-4">
+            <div>
+              <h3 className={`font-semibold text-foreground mb-2 leading-tight ${isMobile ? 'text-base' : 'text-lg'}`}>
+                {selectedVideo.title}
+              </h3>
+              <div className="flex-mobile items-center text-muted-foreground text-sm">
+                <span>by {selectedVideo.channelTitle}</span>
+                <span>•</span>
+                <span>{new Date(selectedVideo.publishedAt).toLocaleDateString()}</span>
+              </div>
+            </div>
             
             {/* Action Buttons */}
-            <div className="flex gap-3 justify-center">
+            <div className={`flex gap-3 ${isMobile ? 'flex-col' : 'justify-center'}`}>
               <Button 
                 onClick={() => window.open(`https://www.youtube.com/watch?v=${selectedVideo.videoId}`, '_blank')}
-                className="bg-red-600 hover:bg-red-700 text-white"
+                variant="gradient"
+                size={isMobile ? "lg" : "default"}
+                className="flex-1 sm:flex-none"
               >
                 <Play className="w-4 h-4 mr-2" />
                 Watch on YouTube
               </Button>
+              
+              <Button
+                onClick={handleFindMoreVideos}
+                variant="outline"
+                size={isMobile ? "lg" : "default"}
+                className="flex-1 sm:flex-none"
+              >
+                <Search className="w-4 h-4 mr-2" />
+                Find More Videos
+              </Button>
+
               <Button
                 onClick={() => {
                   if (analysisTitle && analysisContent) {
                     fetchRelatedYouTubeVideos(analysisTitle, analysisContent);
                   }
                 }}
-                variant="outline"
-                className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                variant="ghost"
+                size={isMobile ? "lg" : "default"}
+                className="flex-1 sm:flex-none"
               >
-                Find Different Video
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh
               </Button>
+            </div>
+
+            {/* Video Quality Indicator */}
+            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+              <div className="w-2 h-2 bg-success rounded-full animate-pulse-glow"></div>
+              <span>HD Quality Available</span>
             </div>
           </div>
         </div>
       ) : youtubeResults.length === 0 && analysisTitle ? (
-        <div className="text-center">
-          <Play className="w-16 h-16 mx-auto mb-3 text-white/70" />
-          <p className="text-white/70 mb-2">No related videos found</p>
-          <p className="text-white/50 text-sm mb-4">We couldn't find YouTube videos for this news topic.</p>
-          <Button
-            onClick={() => {
-              if (analysisTitle && analysisContent) {
-                fetchRelatedYouTubeVideos(analysisTitle, analysisContent);
-              }
-            }}
-            variant="outline"
-            className="bg-white/20 border-white/30 text-white hover:bg-white/30"
-          >
-            Try Again
-          </Button>
+        <div className="text-center py-12">
+          <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+            <Play className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h3 className="heading-responsive text-foreground mb-2">No Videos Found</h3>
+          <p className="body-responsive text-muted-foreground mb-6 max-w-md mx-auto">
+            We couldn't find YouTube videos related to this topic. Try adding a YouTube API key for better results.
+          </p>
+          
+          <div className="space-y-3">
+            <Button
+              onClick={() => {
+                if (analysisTitle && analysisContent) {
+                  fetchRelatedYouTubeVideos(analysisTitle, analysisContent);
+                }
+              }}
+              variant="glow"
+              size={isMobile ? "lg" : "default"}
+            >
+              <Search className="w-4 h-4 mr-2" />
+              Try Again
+            </Button>
+            
+            <Button
+              onClick={() => setShowYouTubeApiKeyInput(true)}
+              variant="outline"
+              size="sm"
+              className="ml-3"
+            >
+              <Key className="w-4 h-4 mr-2" />
+              Add API Key
+            </Button>
+          </div>
+
+          {/* YouTube API Key Input */}
+          {showYouTubeApiKeyInput && (
+            <div className="mt-6 p-4 bg-muted rounded-lg space-y-3">
+              <Label htmlFor="youtube-api-key" className="text-sm font-medium">
+                YouTube API Key
+              </Label>
+              <Input
+                id="youtube-api-key"
+                type="password"
+                placeholder="Enter your YouTube API key"
+                value={youtubeApiKey}
+                onChange={(e) => setYoutubeApiKey(e.target.value)}
+                className="bg-background"
+              />
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleYouTubeApiKeySubmit}
+                  size="sm"
+                  className="flex-1"
+                >
+                  Save Key
+                </Button>
+                <Button
+                  onClick={() => setShowYouTubeApiKeyInput(false)}
+                  variant="ghost"
+                  size="sm"
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
-        <div className="text-center">
-          <Play className="w-16 h-16 mx-auto mb-3 text-white/70" />
-          <p className="text-white/70">Loading video content...</p>
-          <p className="text-white/50 text-sm mt-2">Searching for related videos</p>
+        <div className="text-center py-12">
+          <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center animate-pulse">
+            <Play className="w-8 h-8 text-primary" />
+          </div>
+          <h3 className="heading-responsive text-foreground mb-2">Loading Video Content</h3>
+          <p className="body-responsive text-muted-foreground">Searching for related videos...</p>
         </div>
       )}
-    </div>;
+    </div>
+  );
 };

@@ -389,41 +389,45 @@ export const ExtendedView = (): JSX.Element => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-gray-50">
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200 px-4 py-4">
+      <div className="bg-card/80 backdrop-blur-sm shadow-soft border-b border-border mobile-container py-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button onClick={() => setLocation('/dashboard')} variant="ghost" size="sm">
+            <Button onClick={() => setLocation('/dashboard')} variant="ghost" size="icon" className="hover:scale-105 transition-transform">
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <h1 className="font-semibold text-lg">User Input Analysis</h1>
+            <h1 className="subheading-responsive">Analysis Details</h1>
           </div>
-          <Button variant="ghost" size="sm" onClick={handleShare}>
+          <Button variant="ghost" size="icon" onClick={handleShare} className="hover:scale-105 transition-transform">
             <Share className="w-5 h-5" />
           </Button>
         </div>
       </div>
 
-      <main className="p-4 space-y-4">
+      <main className="mobile-container py-6 space-y-6">
         {/* Analysis Summary Card */}
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-400 to-blue-600 p-6 text-white">
+        <Card className="card-elegant overflow-hidden animate-slide-in-up">
+          <div className="bg-gradient-to-r from-primary to-primary-light p-4 sm:p-6 text-primary-foreground">
             {/* AI Video Generator */}
             <VideoGenerator analysisTitle={analysisData.title} analysisContent={analysisData.content} analysisData={analysisData} />
             
-            <div className="flex items-center justify-between mb-4">
-              <Badge className={`${getBiasColor(analysisData.analysis.biasLevel)} text-white px-3 py-1`}>
+            <div className="flex-mobile items-center justify-between mb-4">
+              <Badge className={`${getBiasColor(analysisData.analysis.biasLevel)} text-white px-4 py-2 rounded-full`}>
                 {analysisData.analysis.biasLevel}
               </Badge>
-              <span className="text-blue-100">{analysisData.confidence}% credible</span>
+              <span className="text-primary-foreground/80 font-semibold">{analysisData.confidence}% credible</span>
             </div>
-            <div className="flex items-center gap-3 mb-3">
-              <Globe className="w-8 h-8" />
-              <div>
-                <h2 className="font-semibold text-lg">{analysisData.title}</h2>
-                <p className="text-blue-100 text-sm">
-                  article • Analysis • {analysisData.timestamp.toLocaleDateString()}
+            
+            <div className="flex items-start gap-4 mb-4">
+              <Globe className="w-8 h-8 flex-shrink-0 mt-1" />
+              <div className="min-w-0 flex-1">
+                <h2 className="subheading-responsive font-bold mb-2 text-primary-foreground break-words">
+                  {analysisData.title}
+                </h2>
+                <p className="text-primary-foreground/80 text-sm">
+                  {analysisData.mediaType} • Analysis • {analysisData.timestamp.toLocaleDateString()}
                 </p>
               </div>
             </div>
@@ -604,5 +608,6 @@ export const ExtendedView = (): JSX.Element => {
         {/* Share Modal */}
         {analysisData && <ShareModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} analysisData={analysisData} />}
       </main>
-    </div>;
+    </div>
+  );
 };

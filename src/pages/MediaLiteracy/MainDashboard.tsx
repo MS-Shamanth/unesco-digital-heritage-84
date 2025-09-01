@@ -202,135 +202,171 @@ export const MainDashboard = (): JSX.Element => {
   const handleProfileClick = () => {
     setLocation('/profile-settings');
   };
-  return <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+  return <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-4 py-4">
+      <div className="bg-card/80 backdrop-blur-sm shadow-soft border-b border-border mobile-container py-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
-          <div className="font-inter font-bold text-xl text-[#2D3A8C] dark:text-white">InfoShield</div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-xs">
+          <div className="font-bold text-xl sm:text-2xl bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
+            InfoShield
+          </div>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Badge variant="outline" className="text-xs px-2 py-1 animate-pulse-glow">
               {callsRemaining} calls left
             </Badge>
-            <Button onClick={() => setLocation('/notifications')} variant="ghost" className="p-2">
-              <Bell className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+            <Button onClick={() => setLocation('/notifications')} variant="ghost" size="icon" className="hover:scale-105 transition-transform">
+              <Bell className="w-5 h-5 text-muted-foreground hover:text-foreground" />
             </Button>
-            <Button onClick={handleProfileClick} variant="ghost" className="p-2">
-              <User className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+            <Button onClick={handleProfileClick} variant="ghost" size="icon" className="hover:scale-105 transition-transform">
+              <User className="w-5 h-5 text-muted-foreground hover:text-foreground" />
             </Button>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <main className="p-6 pb-24">
+      <main className="mobile-container py-6 pb-24 space-y-6">
           {/* Input Section */}
-          <Card className="bg-white dark:bg-gray-800 shadow-sm rounded-[20px] border border-gray-200 dark:border-gray-700 mb-8">
-            <CardContent className="p-6">
+          <Card className="card-elegant animate-slide-in-up">
+            <CardContent className="p-4 sm:p-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-inter font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-3">
                     Paste link or upload content
                   </label>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} placeholder="Enter URL, paste text, or upload media..." className="w-full pl-10 pr-16 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-[15px] font-inter text-sm focus:outline-none focus:ring-2 focus:ring-[#2D3A8C] focus:border-transparent" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <input 
+                      type="text" 
+                      value={inputValue} 
+                      onChange={e => setInputValue(e.target.value)} 
+                      placeholder="Enter URL, paste text, or upload media..." 
+                      className="w-full pl-10 pr-16 py-3 sm:py-4 border border-input bg-background text-foreground rounded-xl text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300" 
+                    />
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                       <div className="relative">
-                        <Button onClick={e => {
-                      e.stopPropagation();
-                      setShowUploadDropdown(!showUploadDropdown);
-                    }} size="sm" variant="ghost" className="p-1 h-8 w-8 rounded-full bg-[#2D3A8C] hover:bg-[#252F75] text-white">
+                        <Button 
+                          onClick={e => {
+                            e.stopPropagation();
+                            setShowUploadDropdown(!showUploadDropdown);
+                          }} 
+                          size="sm" 
+                          variant="glow" 
+                          className="p-2 h-8 w-8 rounded-full"
+                        >
                           <Plus className="w-4 h-4" />
                         </Button>
 
-                        {showUploadDropdown && <div className="absolute right-0 top-full mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-[12px] shadow-xl py-2 z-50 min-w-[160px]">
-                            <button onClick={() => {
-                        // Handle file upload (all types)
-                        const input = document.createElement('input');
-                        input.type = 'file';
-                        input.accept = 'image/*,video/*,audio/*';
-                        input.multiple = true;
-                        input.onchange = (e) => {
-                          const files = (e.target as HTMLInputElement).files;
-                          if (files && files.length > 0) {
-                            toast({
-                              title: "Files Selected",
-                              description: `${files.length} file(s) ready for upload`
-                            });
-                          }
-                        };
-                        input.click();
-                        setShowUploadDropdown(false);
-                      }} className="w-full px-4 py-2 text-left text-sm font-inter text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors">
-                              <Folder className="w-4 h-4 text-[#2D3A8C]" />
+                        {showUploadDropdown && (
+                          <div className="absolute right-0 top-full mt-2 bg-card border border-border rounded-xl shadow-large py-2 z-50 min-w-[180px] animate-slide-in-up">
+                            <button 
+                              onClick={() => {
+                                // Handle file upload (all types)
+                                const input = document.createElement('input');
+                                input.type = 'file';
+                                input.accept = 'image/*,video/*,audio/*';
+                                input.multiple = true;
+                                input.onchange = (e) => {
+                                  const files = (e.target as HTMLInputElement).files;
+                                  if (files && files.length > 0) {
+                                    toast({
+                                      title: "Files Selected",
+                                      description: `${files.length} file(s) ready for upload`
+                                    });
+                                  }
+                                };
+                                input.click();
+                                setShowUploadDropdown(false);
+                              }} 
+                              className="w-full px-4 py-3 text-left text-sm text-foreground hover:bg-accent/50 flex items-center gap-3 transition-colors"
+                            >
+                              <Folder className="w-4 h-4 text-primary" />
                               Upload Files
                             </button>
-                            <button onClick={() => {
-                        // Handle camera access
-                        navigator.mediaDevices?.getUserMedia({
-                          video: true
-                        }).then(() => {
-                          toast({
-                            title: "Camera Access",
-                            description: "Camera permissions granted"
-                          });
-                        }).catch(() => {
-                          toast({
-                            title: "Camera Error",
-                            description: "Unable to access camera",
-                            variant: "destructive"
-                          });
-                        });
-                        setShowUploadDropdown(false);
-                      }} className="w-full px-4 py-2 text-left text-sm font-inter text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors">
-                              <Camera className="w-4 h-4 text-[#2D3A8C]" />
+                            <button 
+                              onClick={() => {
+                                // Handle camera access
+                                navigator.mediaDevices?.getUserMedia({
+                                  video: true
+                                }).then(() => {
+                                  toast({
+                                    title: "Camera Access",
+                                    description: "Camera permissions granted"
+                                  });
+                                }).catch(() => {
+                                  toast({
+                                    title: "Camera Error",
+                                    description: "Unable to access camera",
+                                    variant: "destructive"
+                                  });
+                                });
+                                setShowUploadDropdown(false);
+                              }} 
+                              className="w-full px-4 py-3 text-left text-sm text-foreground hover:bg-accent/50 flex items-center gap-3 transition-colors"
+                            >
+                              <Camera className="w-4 h-4 text-primary" />
                               Open Camera
                             </button>
-                            <button onClick={() => {
-                        // Handle audio recording
-                        navigator.mediaDevices?.getUserMedia({
-                          audio: true
-                        }).then(() => {
-                          toast({
-                            title: "Microphone Access",
-                            description: "Microphone permissions granted"
-                          });
-                        }).catch(() => {
-                          toast({
-                            title: "Microphone Error",
-                            description: "Unable to access microphone",
-                            variant: "destructive"
-                          });
-                        });
-                        setShowUploadDropdown(false);
-                      }} className="w-full px-4 py-2 text-left text-sm font-inter text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors">
-                              <Mic className="w-4 h-4 text-[#2D3A8C]" />
+                            <button 
+                              onClick={() => {
+                                // Handle audio recording
+                                navigator.mediaDevices?.getUserMedia({
+                                  audio: true
+                                }).then(() => {
+                                  toast({
+                                    title: "Microphone Access",
+                                    description: "Microphone permissions granted"
+                                  });
+                                }).catch(() => {
+                                  toast({
+                                    title: "Microphone Error",
+                                    description: "Unable to access microphone",
+                                    variant: "destructive"
+                                  });
+                                });
+                                setShowUploadDropdown(false);
+                              }} 
+                              className="w-full px-4 py-3 text-left text-sm text-foreground hover:bg-accent/50 flex items-center gap-3 transition-colors"
+                            >
+                              <Mic className="w-4 h-4 text-primary" />
                               Record Audio
                             </button>
-                          </div>}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex gap-2 items-center">
-                  <Button onClick={handleAnalyze} disabled={!inputValue.trim() || isAnalyzing || callsRemaining <= 0} className="flex-1 bg-[#2D3A8C] hover:bg-[#252F75] text-white rounded-[15px] py-3 font-inter font-semibold disabled:bg-gray-300">
+                <div className="flex-mobile">
+                  <Button 
+                    onClick={handleAnalyze} 
+                    disabled={!inputValue.trim() || isAnalyzing || callsRemaining <= 0} 
+                    variant="gradient"
+                    size="lg"
+                    className="flex-1 sm:flex-none min-w-[160px]"
+                  >
                     {isAnalyzing ? "Analyzing..." : isValidUrl ? "Analyze URL" : "Analyze Text"}
                   </Button>
-                  {isValidUrl && <Badge variant="secondary" className="text-xs whitespace-nowrap">
+                  {isValidUrl && (
+                    <Badge variant="secondary" className="text-xs whitespace-nowrap animate-pulse">
                       URL Detected
-                    </Badge>}
+                    </Badge>
+                  )}
                 </div>
                 
-                {callsRemaining <= 2 && callsRemaining > 0 && <div className="flex items-center gap-2 text-sm text-orange-600 bg-orange-50 dark:bg-orange-900/20 dark:text-orange-300 p-2 rounded-lg">
+                {callsRemaining <= 2 && callsRemaining > 0 && (
+                  <div className="flex items-center gap-2 text-sm text-warning bg-warning/10 p-3 rounded-lg animate-slide-in-up">
                     <AlertTriangle className="w-4 h-4" />
                     <span>Only {callsRemaining} analysis remaining this session</span>
-                  </div>}
+                  </div>
+                )}
                 
-                {callsRemaining === 0 && <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-300 p-2 rounded-lg">
+                {callsRemaining === 0 && (
+                  <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 p-3 rounded-lg animate-slide-in-up">
                     <XCircle className="w-4 h-4" />
                     <span>API limit reached. Refresh page to reset.</span>
-                  </div>}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
