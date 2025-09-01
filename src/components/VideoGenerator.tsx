@@ -233,7 +233,7 @@ export const VideoGenerator: React.FC<VideoGeneratorProps> = ({
           {/* Video Header */}
           <div className="flex-mobile items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-8 bg-gradient-to-b from-primary to-primary-light rounded-full"></div>
+              <div className="w-2 h-8 bg-primary rounded-full"></div>
               <h2 className="subheading-responsive text-foreground">Related Video Content</h2>
             </div>
             {youtubeResults.length > 1 && (
@@ -290,7 +290,6 @@ export const VideoGenerator: React.FC<VideoGeneratorProps> = ({
             <div className={`flex gap-3 ${isMobile ? 'flex-col' : 'justify-center'}`}>
               <Button 
                 onClick={() => window.open(`https://www.youtube.com/watch?v=${selectedVideo.videoId}`, '_blank')}
-                variant="gradient"
                 size={isMobile ? "lg" : "default"}
                 className="flex-1 sm:flex-none"
               >
@@ -325,7 +324,7 @@ export const VideoGenerator: React.FC<VideoGeneratorProps> = ({
 
             {/* Video Quality Indicator */}
             <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-              <div className="w-2 h-2 bg-success rounded-full animate-pulse-glow"></div>
+              <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
               <span>HD Quality Available</span>
             </div>
           </div>
@@ -347,7 +346,6 @@ export const VideoGenerator: React.FC<VideoGeneratorProps> = ({
                   fetchRelatedYouTubeVideos(analysisTitle, analysisContent);
                 }
               }}
-              variant="glow"
               size={isMobile ? "lg" : "default"}
             >
               <Search className="w-4 h-4 mr-2" />

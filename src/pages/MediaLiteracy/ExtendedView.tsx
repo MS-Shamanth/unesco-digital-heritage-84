@@ -390,9 +390,9 @@ export const ExtendedView = (): JSX.Element => {
       </div>;
   }
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-card/80 backdrop-blur-sm shadow-soft border-b border-border mobile-container py-4 sticky top-0 z-40">
+      <div className="bg-card/95 backdrop-blur-sm shadow-sm border-b border-border mobile-container py-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button onClick={() => setLocation('/dashboard')} variant="ghost" size="icon" className="hover:scale-105 transition-transform">
@@ -409,7 +409,7 @@ export const ExtendedView = (): JSX.Element => {
       <main className="mobile-container py-6 space-y-6">
         {/* Analysis Summary Card */}
         <Card className="card-elegant overflow-hidden animate-slide-in-up">
-          <div className="bg-gradient-to-r from-primary to-primary-light p-4 sm:p-6 text-primary-foreground">
+          <div className="bg-muted/50 p-4 sm:p-6 text-foreground">
             {/* AI Video Generator */}
             <VideoGenerator analysisTitle={analysisData.title} analysisContent={analysisData.content} analysisData={analysisData} />
             
@@ -417,16 +417,16 @@ export const ExtendedView = (): JSX.Element => {
               <Badge className={`${getBiasColor(analysisData.analysis.biasLevel)} text-white px-4 py-2 rounded-full`}>
                 {analysisData.analysis.biasLevel}
               </Badge>
-              <span className="text-primary-foreground/80 font-semibold">{analysisData.confidence}% credible</span>
+              <span className="text-muted-foreground font-semibold">{analysisData.confidence}% credible</span>
             </div>
             
             <div className="flex items-start gap-4 mb-4">
-              <Globe className="w-8 h-8 flex-shrink-0 mt-1" />
+              <Globe className="w-8 h-8 flex-shrink-0 mt-1 text-muted-foreground" />
               <div className="min-w-0 flex-1">
-                <h2 className="subheading-responsive font-bold mb-2 text-primary-foreground break-words">
+                <h2 className="subheading-responsive font-bold mb-2 text-foreground break-words">
                   {analysisData.title}
                 </h2>
-                <p className="text-primary-foreground/80 text-sm">
+                <p className="text-muted-foreground text-sm">
                   {analysisData.mediaType} • Analysis • {analysisData.timestamp.toLocaleDateString()}
                 </p>
               </div>

@@ -202,15 +202,15 @@ export const MainDashboard = (): JSX.Element => {
   const handleProfileClick = () => {
     setLocation('/profile-settings');
   };
-  return <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+  return <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-card/80 backdrop-blur-sm shadow-soft border-b border-border mobile-container py-4 sticky top-0 z-40">
+      <div className="bg-card/95 backdrop-blur-sm shadow-sm border-b border-border mobile-container py-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
-          <div className="font-bold text-xl sm:text-2xl bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
+          <div className="font-bold text-xl sm:text-2xl text-foreground">
             InfoShield
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
-            <Badge variant="outline" className="text-xs px-2 py-1 animate-pulse-glow">
+            <Badge variant="outline" className="text-xs px-2 py-1">
               {callsRemaining} calls left
             </Badge>
             <Button onClick={() => setLocation('/notifications')} variant="ghost" size="icon" className="hover:scale-105 transition-transform">
@@ -341,14 +341,13 @@ export const MainDashboard = (): JSX.Element => {
                   <Button 
                     onClick={handleAnalyze} 
                     disabled={!inputValue.trim() || isAnalyzing || callsRemaining <= 0} 
-                    variant="gradient"
                     size="lg"
                     className="flex-1 sm:flex-none min-w-[160px]"
                   >
                     {isAnalyzing ? "Analyzing..." : isValidUrl ? "Analyze URL" : "Analyze Text"}
                   </Button>
                   {isValidUrl && (
-                    <Badge variant="secondary" className="text-xs whitespace-nowrap animate-pulse">
+                    <Badge variant="secondary" className="text-xs whitespace-nowrap">
                       URL Detected
                     </Badge>
                   )}
